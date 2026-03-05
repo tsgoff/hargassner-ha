@@ -2,43 +2,44 @@
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
-Intégration personnalisée pour les chaudières Hargassner (pellets/biomasse) via l'API cloud Hargassner.
+Custom integration for Hargassner pellet/biomass boilers via the Hargassner cloud API.
 
-> ⚠️ **Intégration non officielle** — reverse-engineerée depuis l'app Android v1.10.0. Nécessite un compte cloud Hargassner actif.
+> ⚠️ **Unofficial integration** — reverse-engineered from the Android app v1.10.0. Requires an active Hargassner cloud account.
 
-## Appareils supportés
+## Supported Devices
 
-Testé avec **Nano.2 12**. Devrait fonctionner avec tous les appareils Touch Tronic connectés au cloud.
+Tested with **Nano.2 12**. Should work with all Touch Tronic devices connected to the Hargassner cloud.
 
-## Fonctionnalités
+## Features
 
-| Plateforme | Description |
+| Platform | Description |
 |---|---|
-| `sensor` | Températures chaudière/fumées/départ, stock combustible, température extérieure, état |
-| `climate` | Thermostat par circuit de chauffage |
-| `number` | Consignes jour/nuit, pente courbe de chauffe, limites désactivation, stock |
-| `select` | Mode circuit (Auto/Chauffage/Réduit/Arrêt), chauffage salle de bain |
+| `sensor` | Boiler/flue/flow temperatures, fuel stock, outdoor temperature, state |
+| `climate` | Thermostat per heating circuit |
+| `number` | Day/night setpoints, heating curve slope, deactivation limits, fuel stock |
+| `select` | Circuit mode (Auto/Heating/Setback/Off), bathroom heating |
 
 ## Installation via HACS
 
-1. HACS → Intégrations → ⋮ → Dépôts personnalisés
-2. Ajouter `https://github.com/VOTRE_USERNAME/hargassner-ha` → **Intégration**
-3. Installer "Hargassner" → Redémarrer HA
+1. HACS → Integrations → ⋮ → Custom repositories
+2. Add `https://github.com/lithium73fr/hargassner-ha` → **Integration**
+3. Install "Hargassner" → Restart HA
 
-## Installation manuelle
+## Manual Installation
 
-Copier `custom_components/hargassner/` dans `config/custom_components/` et redémarrer.
+Copy `custom_components/hargassner/` into `config/custom_components/` and restart.
 
 ## Configuration
 
-Paramètres → Appareils & Services → Ajouter → **Hargassner** → email + mot de passe de l'app mobile.
+Settings → Devices & Services → Add Integration → **Hargassner** → enter your app email and password.
 
-## Contribuer
+## Contributing
 
-Si vous avez un modèle différent et que des entités manquent, ouvrez une issue avec la sortie de :
+If you have a different model and some entities are missing, open an issue with the output of:
 ```bash
 curl "https://web.hargassner.at/api/installations/{id}/widgets" -H "Authorization: Bearer {token}" -H "Branding: BRANDING_HARGASSNER"
 ```
 
 ## Disclaimer
-Non affilié à Hargassner GmbH.
+
+Not affiliated with or endorsed by Hargassner GmbH.
