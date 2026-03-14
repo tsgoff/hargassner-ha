@@ -38,14 +38,12 @@ class HargassnerCoordinator(DataUpdateCoordinator):
         self._last_good_data: dict[str, Any] | None = None
 
     async def _async_update_data(self) -> dict[str, Any]:
-        """Fetch latest widget data, with offline fallback and token refresh."""
-        # Proactively refresh token if close to expiry
+        """Fetch latest widget data."""
         try:
             await self.api.ensure_token_valid()
         except HargassnerAuthError as err:
             _LOGGER.error("Re-authentication failed: %s", err)
             if self._last_good_data:
-                _LOGGER.warning("Using cached data due to auth failure")
                 return self._last_good_data
             raise UpdateFailed(f"Authentication error: {err}") from err
 
@@ -57,17 +55,14 @@ class HargassnerCoordinator(DataUpdateCoordinator):
                 return self._last_good_data
             raise UpdateFailed(f"Authentication error: {err}") from err
         except HargassnerApiError as err:
-            # Keep last known values when offline
             if self._last_good_data:
                 _LOGGER.warning("API error, keeping last known values: %s", err)
-                self.online_state = False
                 stale = dict(self._last_good_data)
                 stale["_online"] = False
                 return stale
             raise UpdateFailed(f"API error: {err}") from err
 
-        # Build result dict
-        self.online_state = meta.get("online_state", True)
+        self.online_state = meta.get("online_state", True) if isinstance(meta, dict) else True
         result: dict[str, Any] = {
             "_online": self.online_state,
             "_meta": meta,
@@ -75,17 +70,43 @@ class HargassnerCoordinator(DataUpdateCoordinator):
 
         for widget in widgets:
             if not isinstance(widget, dict):
+                _LOGGER.debug("Skipping non-dict widget: %s", type(widget))
                 continue
-            widget_type = widget.get("widget", "UNKNOWN")
-            widget_number = widget.get("number", "")
-            widget_name = widget.get("values", {}).get("name", widget_type)
-            parameters = widget.get("parameters", {})
-            values = widget.get("values", {})
-            actions = widget.get("actions", {})
 
-            # Include circuit number in key to avoid collisions (e.g. multiple circuits)
+            widget_type = widget.get("widget", "UNKNOWN")
+            widget_number = str(widget.get("number", ""))
+
+            # --- values : doit être un dict ---
+            raw_values = widget.get("values")
+            values = raw_values if isinstance(raw_values, dict) else {}
+            widget_name = values.get("name", widget_type)
+
+            # --- parameters : doit être un dict, filtrer les valeurs non-dict ---
+            raw_parameters = widget.get("parameters")
+            if isinstance(raw_parameters, dict):
+                # Garder uniquement les paramètres qui sont des dicts (pas les listes/scalaires)
+                parameters = {
+                    k: v for k, v in raw_parameters.items()
+                    if isinstance(v, dict)
+                }
+                # Logger les paramètres ignorés pour debug
+                ignored = [k for k, v in raw_parameters.items() if not isinstance(v, dict)]
+                if ignored:
+                    _LOGGER.debug("Ignored non-dict parameters in %s: %s", widget_type, ignored)
+            else:
+                parameters = {}
+
+            # --- actions : doit être un dict ---
+            raw_actions = widget.get("actions")
+            actions = raw_actions if isinstance(raw_actions, dict) else {}
+
             suffix = f"_{widget_number}" if widget_number else ""
-            widget_key = f"{widget_type}{suffix}_{widget_name}".replace(" ", "_").replace(".", "_").upper()
+            widget_key = (
+                f"{widget_type}{suffix}_{widget_name}"
+                .replace(" ", "_")
+                .replace(".", "_")
+                .upper()
+            )
 
             result[widget_key] = {
                 "widget_type": widget_type,
@@ -96,14 +117,11 @@ class HargassnerCoordinator(DataUpdateCoordinator):
                 "actions": actions,
             }
 
-        # Cache for offline fallback
         self._last_good_data = dict(result)
         self._last_good_data["_online"] = True
-
         return result
 
     async def async_patch_value(self, resource_url: str, value: Any) -> bool:
-        """Set a parameter value and refresh."""
         try:
             await self.api.patch_value(resource_url, value)
             await self.async_request_refresh()
@@ -113,7 +131,6 @@ class HargassnerCoordinator(DataUpdateCoordinator):
             return False
 
     async def async_post_action(self, resource_url: str) -> bool:
-        """Trigger an action and refresh."""
         try:
             await self.api.post_action(resource_url)
             await self.async_request_refresh()

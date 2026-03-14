@@ -95,24 +95,25 @@ class HargassnerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         )
 
     @staticmethod
-    def async_get_options_flow(config_entry):
+    @config_entries.callback
+    def async_get_options_flow(config_entry: config_entries.ConfigEntry) -> config_entries.OptionsFlow:
         return HargassnerOptionsFlow(config_entry)
 
 
 class HargassnerOptionsFlow(config_entries.OptionsFlow):
     """Options flow — allows changing scan interval after setup."""
 
-    def __init__(self, config_entry) -> None:
-        self.config_entry = config_entry
+    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+        self._config_entry = config_entry
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         if user_input is not None:
             return self.async_create_entry(title="", data=user_input)
 
-        current_interval = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        current_interval = self._config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
         schema = vol.Schema({
             vol.Required(CONF_SCAN_INTERVAL, default=current_interval): vol.All(
-                int, vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)
+                vol.Coerce(int), vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)
             ),
         })
         return self.async_show_form(step_id="init", data_schema=schema)

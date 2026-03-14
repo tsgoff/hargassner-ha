@@ -30,12 +30,6 @@ SWITCH_DESCRIPTIONS: list[HargassnerSwitchDescription] = [
         icon="mdi:weather-partly-cloudy",
     ),
     HargassnerSwitchDescription(
-        key="holiday_mode",
-        name="Holiday Mode",
-        widget_prefix="HEATING_CIRCUIT",
-        icon="mdi:palm-tree",
-    ),
-    HargassnerSwitchDescription(
         key="pool_heating",
         name="Pool Heating",
         widget_prefix="HEATING_CIRCUIT_POOL",
