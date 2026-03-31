@@ -1,7 +1,6 @@
 """Climate entities for Hargassner heating circuits."""
 from __future__ import annotations
 import logging
-from typing import Any
 from homeassistant.components.climate import ClimateEntity, ClimateEntityFeature, HVACMode
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import ATTR_TEMPERATURE, UnitOfTemperature
@@ -64,16 +63,20 @@ class HargassnerClimateEntity(HargassnerEntity, ClimateEntity):
         if widget:
             val = widget.get("values", {}).get("room_temperature_current")
             if val is not None:
-                try: return float(val)
-                except: pass
+                try:
+                    return float(val)
+                except (ValueError, TypeError):
+                    pass
         return None
 
     @property
     def target_temperature(self):
         p = self._get_param("room_temperature_heating")
         if p:
-            try: return float(p.get("value", 20))
-            except: pass
+            try:
+                return float(p.get("value", 20))
+            except (ValueError, TypeError):
+                pass
         return None
 
     @property

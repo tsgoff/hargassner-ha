@@ -99,8 +99,10 @@ class HargassnerNumberEntity(HargassnerEntity, NumberEntity):
         if isinstance(param, dict):
             val = param.get("value")
             if val is not None:
-                try: return float(val)
-                except: pass
+                try:
+                    return float(val)
+                except (ValueError, TypeError):
+                    pass
         return None
 
     async def async_set_native_value(self, value: float) -> None:

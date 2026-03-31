@@ -2,10 +2,11 @@
 from __future__ import annotations
 
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, patch
 
 from homeassistant import config_entries, data_entry_flow
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.hargassner.api import HargassnerApiError, HargassnerAuthError
 from custom_components.hargassner.const import (
@@ -70,7 +71,6 @@ async def test_config_flow_multiple_installations(hass):
             result["flow_id"],
             user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
         )
-        # Should land on installation step
         assert result["type"] == data_entry_flow.FlowResultType.FORM
         assert result["step_id"] == "installation"
 
@@ -89,7 +89,6 @@ async def test_config_flow_multiple_installations(hass):
 
 @pytest.mark.asyncio
 async def test_config_flow_invalid_auth(hass):
-    """Wrong credentials should show an error, not create an entry."""
     with patch(PATCH_API) as MockApi:
         instance = MockApi.return_value
         instance.login = AsyncMock(side_effect=HargassnerAuthError("Bad credentials"))
@@ -208,6 +207,7 @@ async def test_options_flow_changes_scan_interval(hass):
             "installation_name": "My Hargassner",
         },
         options={CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL},
+        unique_id="hargassner_42",
     )
     entry.add_to_hass(hass)
 
@@ -221,28 +221,3 @@ async def test_options_flow_changes_scan_interval(hass):
     )
     assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
     assert entry.options[CONF_SCAN_INTERVAL] == 120
-
-
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
-
-from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant
-
-
-class MockConfigEntry(config_entries.ConfigEntry):
-    """Minimal mock config entry for options flow tests."""
-
-    def __init__(self, domain, data, options=None):
-        super().__init__(
-            version=1,
-            minor_version=1,
-            domain=domain,
-            title="Test",
-            data=data,
-            options=options or {},
-            source=config_entries.SOURCE_USER,
-            entry_id="test_entry_id",
-            unique_id=f"hargassner_{data.get(CONF_INSTALLATION_ID, '42')}",
-        )
