@@ -40,6 +40,16 @@ If you have a different model and some entities are missing, open an issue with 
 curl "https://web.hargassner.at/api/installations/{id}/widgets" -H "Authorization: Bearer {token}" -H "Branding: BRANDING_HARGASSNER"
 ```
 
+You can also use the helper script to log in, print the Bearer token, and list all installation IDs:
+```bash
+bash scripts/get_hargassner_debug_data.sh
+```
+
+Or pass credentials via environment variables:
+```bash
+HARGASSNER_EMAIL="info@example.de" HARGASSNER_PASSWORD="secret" bash scripts/get_hargassner_debug_data.sh
+```
+
 ## Disclaimer
 
 Not affiliated with or endorsed by Hargassner GmbH.
