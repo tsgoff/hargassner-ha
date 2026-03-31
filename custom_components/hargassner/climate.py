@@ -88,7 +88,8 @@ class HargassnerClimateEntity(HargassnerEntity, ClimateEntity):
 
     async def async_set_temperature(self, **kwargs):
         temp = kwargs.get(ATTR_TEMPERATURE)
-        if temp is None: return
+        if temp is None:
+            return
         p = self._get_param("room_temperature_heating")
         if p and p.get("resource"):
             await self.coordinator.async_patch_value(p["resource"], temp)

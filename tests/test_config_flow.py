@@ -11,6 +11,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from custom_components.hargassner.api import HargassnerApiError, HargassnerAuthError
 from custom_components.hargassner.const import (
     CONF_INSTALLATION_ID,
+    CONF_INSTALLATION_NAME,
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
@@ -19,6 +20,7 @@ from tests.conftest import MOCK_INSTALLATIONS
 
 
 PATCH_API = "custom_components.hargassner.config_flow.HargassnerApi"
+PATCH_SETUP_ENTRY = "custom_components.hargassner.async_setup_entry"
 
 
 # ---------------------------------------------------------------------------
@@ -28,7 +30,7 @@ PATCH_API = "custom_components.hargassner.config_flow.HargassnerApi"
 @pytest.mark.asyncio
 async def test_config_flow_single_installation(hass):
     """With one installation, the flow completes without the extra selection step."""
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
@@ -53,13 +55,13 @@ async def test_config_flow_single_installation(hass):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.asyncio
-async def test_config_flow_multiple_installations(hass):
-    """With multiple installations, an extra selection step is shown."""
+async def test_config_flow_multiple_installations_select_one(hass):
+    """With multiple installations, user can select one."""
     installations = [
         {"id": "42", "name": "Home"},
         {"id": "99", "name": "Office"},
     ]
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=installations)
@@ -76,11 +78,47 @@ async def test_config_flow_multiple_installations(hass):
 
         result = await hass.config_entries.flow.async_configure(
             result["flow_id"],
-            user_input={CONF_INSTALLATION_ID: "99"},
+            user_input={"installation_ids": ["99"]},
         )
         assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
         assert result["data"][CONF_INSTALLATION_ID] == "99"
         assert result["title"] == "Office"
+
+
+@pytest.mark.asyncio
+async def test_config_flow_multiple_installations_select_many(hass):
+    """With multiple installations, user can select several at once."""
+    installations = [
+        {"id": "42", "name": "Home"},
+        {"id": "99", "name": "Office"},
+    ]
+    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=installations)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["step_id"] == "installation"
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={"installation_ids": ["42", "99"]},
+        )
+        # The flow returns the last selected entry
+        assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+        assert result["data"][CONF_INSTALLATION_ID] == "99"
+
+        # The first was created via import
+        entries = hass.config_entries.async_entries(DOMAIN)
+        assert len(entries) == 2
+        ids = {e.data[CONF_INSTALLATION_ID] for e in entries}
+        assert ids == {"42", "99"}
 
 
 # ---------------------------------------------------------------------------
@@ -160,7 +198,7 @@ async def test_config_flow_unknown_error(hass):
 @pytest.mark.asyncio
 async def test_config_flow_already_configured(hass):
     """Trying to add the same installation twice should abort."""
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
@@ -175,7 +213,7 @@ async def test_config_flow_already_configured(hass):
         )
 
     # Second setup attempt
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)

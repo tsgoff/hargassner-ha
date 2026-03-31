@@ -10,10 +10,10 @@
         }
       },
       "installation": {
-        "title": "Choisir l'installation",
-        "description": "Plusieurs installations trouvées. Veuillez en sélectionner une.",
+        "title": "Choisir les installations",
+        "description": "Plusieurs installations trouvées. Sélectionnez-en une ou plusieurs.",
         "data": {
-          "installation_id": "Installation"
+          "installation_ids": "Installations"
         }
       }
     },

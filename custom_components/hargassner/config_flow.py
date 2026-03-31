@@ -9,9 +9,11 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.data_entry_flow import FlowResult
+from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import HargassnerApi, HargassnerApiError, HargassnerAuthError
+
 from .const import (
     CONF_INSTALLATION_ID,
     CONF_INSTALLATION_NAME,
@@ -70,14 +72,40 @@ class HargassnerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_installation(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         if user_input is not None:
-            installation_id = user_input[CONF_INSTALLATION_ID]
-            installation = next((i for i in self._installations if str(i.get("id")) == installation_id), None)
-            if installation:
-                return await self._create_entry(installation)
+            selected_ids = user_input.get("installation_ids", [])
+            selected = [i for i in self._installations if str(i.get("id")) in selected_ids]
+            if selected:
+                # Create additional entries via import for all but the last
+                for inst in selected[:-1]:
+                    await self.hass.config_entries.flow.async_init(
+                        DOMAIN,
+                        context={"source": config_entries.SOURCE_IMPORT},
+                        data={
+                            CONF_EMAIL: self._email,
+                            CONF_PASSWORD: self._password,
+                            CONF_INSTALLATION_ID: str(inst.get("id")),
+                            CONF_INSTALLATION_NAME: inst.get("name", str(inst.get("id"))),
+                        },
+                    )
+                # Return the last one as the flow result
+                return await self._create_entry(selected[-1])
 
         options = {str(i.get("id")): i.get("name", str(i.get("id"))) for i in self._installations}
-        schema = vol.Schema({vol.Required(CONF_INSTALLATION_ID): vol.In(options)})
+        schema = vol.Schema({
+            vol.Required("installation_ids"): cv.multi_select(options),
+        })
         return self.async_show_form(step_id="installation", data_schema=schema)
+
+    async def async_step_import(self, import_data: dict[str, Any]) -> FlowResult:
+        """Create entry from programmatic import (used for multi-select)."""
+        installation_id = import_data[CONF_INSTALLATION_ID]
+        installation_name = import_data.get(CONF_INSTALLATION_NAME, installation_id)
+        await self.async_set_unique_id(f"hargassner_{installation_id}")
+        self._abort_if_unique_id_configured()
+        return self.async_create_entry(
+            title=installation_name,
+            data=import_data,
+        )
 
     async def _create_entry(self, installation: dict) -> FlowResult:
         installation_id = str(installation.get("id"))
