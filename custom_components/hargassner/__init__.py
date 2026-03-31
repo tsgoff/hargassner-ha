@@ -103,6 +103,7 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
-        coordinator: HargassnerCoordinator = hass.data[DOMAIN].pop(entry.entry_id)
-        await coordinator.api.logout()
+        coordinator = hass.data.get(DOMAIN, {}).pop(entry.entry_id, None)
+        if coordinator is not None:
+            await coordinator.api.logout()
     return unload_ok
