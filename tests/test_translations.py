@@ -14,16 +14,30 @@ EXPECTED_LANGUAGES = {"de", "en", "fr"}
 EXPECTED_SENSOR_KEYS = {
     "heater_temp_current", "heater_temp_target", "smoke_temperature",
     "outdoor_temperature", "outdoor_temperature_average", "heater_state",
-    "heater_program", "fuel_stock", "efficiency", "flow_temp_current",
+    "heater_program", "device_type", "heater_exhaust_guard",
+    "fuel_stock", "efficiency", "flow_temp_current",
     "flow_temp_target", "room_temp_current", "room_temp_target",
-    "circuit_state", "pump_active", "online_state",
+    "circuit_state", "circuit_active", "circuit_outdoor_temperature",
+    "circuit_outdoor_temperature_average", "pump_active", "online_state",
+    "source_temperature", "request_temperature",
+    "secondary_flow_temp_current", "secondary_flow_temp_target",
+    "primary_return_temp_current", "controller_program",
+    "buffer_state", "buffer_charge", "buffer_capacity",
+    "buffer_temp_top", "buffer_temp_center", "buffer_temp_bottom",
+    "buffer_pump_active",
+    "boiler_state", "boiler_temp_current", "boiler_temp_target",
+    "boiler_charge", "boiler_pump_active", "circulation_pump_active",
+    "force_charging_active",
+    "event_count", "latest_event", "latest_event_type",
 }
 EXPECTED_NUMBER_KEYS = {
     "room_temperature_heating", "room_temperature_reduction",
     "deactivation_limit_heating", "deactivation_limit_reduction_day",
     "deactivation_limit_reduction_night", "steepness", "fuel_stock",
+    "room_temperature_correction", "boiler_temperature_target",
 }
-EXPECTED_SELECT_KEYS = {"mode", "pool_heating"}
+EXPECTED_SELECT_KEYS = {"mode", "pool_heating", "program"}
+EXPECTED_BUTTON_KEYS = {"confirm_all", "one_time_circulation", "force_charging", "start_ignition"}
 
 CONFIG_FLOW_KEYS = {
     "config.step.user.title",
@@ -32,7 +46,7 @@ CONFIG_FLOW_KEYS = {
     "config.step.user.data.password",
     "config.step.installation.title",
     "config.step.installation.description",
-    "config.step.installation.data.installation_id",
+    "config.step.installation.data.installation_ids",
     "config.error.invalid_auth",
     "config.error.cannot_connect",
     "config.error.no_installations",
@@ -126,6 +140,14 @@ def test_select_entity_keys_complete(lang_file):
     select_section = data.get("entity", {}).get("select", {})
     missing = EXPECTED_SELECT_KEYS - set(select_section.keys())
     assert not missing, f"{lang_file.name} missing select entity keys: {sorted(missing)}"
+
+
+@pytest.mark.parametrize("lang_file", list(TRANSLATIONS_DIR.glob("*.json")))
+def test_button_entity_keys_complete(lang_file):
+    data = load_json(lang_file)
+    button_section = data.get("entity", {}).get("button", {})
+    missing = EXPECTED_BUTTON_KEYS - set(button_section.keys())
+    assert not missing, f"{lang_file.name} missing button entity keys: {sorted(missing)}"
 
 
 # ---------------------------------------------------------------------------

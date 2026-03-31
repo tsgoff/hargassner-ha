@@ -86,8 +86,99 @@ MOCK_WIDGET_CIRCUIT = {
     "actions": {},
 }
 
+MOCK_WIDGET_BUFFER = {
+    "widget": "BUFFER",
+    "values": {
+        "state": "STATE_CHARGING",
+        "buffer_charge": 86,
+        "capacity": 5000,
+        "buffer_temperature_top": 76.5,
+        "buffer_temperature_center": 57.5,
+        "buffer_temperature_bottom": 56.5,
+        "pump_active": True,
+    },
+    "parameters": {},
+}
+
+MOCK_WIDGET_BOILER = {
+    "widget": "BOILER",
+    "number": "1",
+    "values": {
+        "name": "Boiler 1",
+        "state": "STATE_CHARGING",
+        "boiler_temperature_target": 53,
+        "boiler_temperature_current": 51,
+        "boiler_charge": 96.2,
+        "pump_active": True,
+        "circulation_pump_active": False,
+        "force_charging_active": False,
+    },
+    "parameters": {
+        "boiler_temperature_target": {
+            "value": 53,
+            "min": 10,
+            "max": 84,
+            "step": 1,
+            "resource": "https://web.hargassner.at/api/installations/42/widgets/boilers/1/parameters/temperature-target",
+        },
+    },
+    "actions": {
+        "one_time_circulation": {
+            "resource": "https://web.hargassner.at/api/installations/42/widgets/boilers/1/actions/one-time-circulation",
+        },
+        "force_charging": {
+            "resource": "https://web.hargassner.at/api/installations/42/widgets/boilers/1/actions/force-charging",
+        },
+    },
+}
+
+MOCK_WIDGET_CONTROLLER = {
+    "widget": "HEATING_CIRCUIT_CONTROLLER",
+    "values": {
+        "name": "Controller 1",
+        "source_temperature": 75,
+        "request_temperature": 78,
+        "outdoor_temperature": 7.7,
+        "outdoor_temperature_average": 6,
+        "secondary_flow_temperature_current": 64.6,
+        "secondary_flow_temperature_target": 64,
+        "primary_return_temperature_current": 50,
+        "program": "PROGRAM_AUTOMATIC",
+    },
+}
+
+MOCK_WIDGET_EVENTS = {
+    "widget": "EVENTS",
+    "values": [
+        {
+            "id": 28771085,
+            "event_code": 619,
+            "event_type": "TYPE_WARNING",
+            "created_at": "2026-03-30T10:51:10.421673Z",
+            "text": "eCleaner Wartung Antrieb",
+        }
+    ],
+    "actions": {
+        "confirm_all": {
+            "resource": "/installations/42/widgets/events/actions/confirm-all",
+        }
+    },
+}
+
 MOCK_WIDGETS_RESPONSE = {
     "data": [MOCK_WIDGET_HEATER, MOCK_WIDGET_CIRCUIT],
+    "meta": {"online_state": True},
+}
+
+MOCK_WIDGETS_FULL_RESPONSE = {
+    "data": [
+        MOCK_WIDGET_EVENTS,
+        MOCK_WIDGET_HEATER,
+        MOCK_WIDGET_BUFFER,
+        MOCK_WIDGET_CIRCUIT,
+        MOCK_WIDGET_CONTROLLER,
+        MOCK_WIDGET_BOILER,
+    ],
     "meta": {"online_state": True},
 }
 

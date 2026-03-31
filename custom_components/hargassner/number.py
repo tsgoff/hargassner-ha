@@ -53,6 +53,16 @@ NUMBER_DESCRIPTIONS: list[HargassnerNumberDescription] = [
         native_unit_of_measurement="kg", native_min_value=0.0, native_max_value=32000.0,
         native_step=1.0, mode=NumberMode.BOX, icon="mdi:sack",
     ),
+    HargassnerNumberDescription(
+        key="room_temperature_correction", name="Room Temperature Correction", widget_prefix="HEATING_CIRCUIT",
+        device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        native_min_value=-3.0, native_max_value=3.0, native_step=0.5, mode=NumberMode.BOX,
+    ),
+    HargassnerNumberDescription(
+        key="boiler_temperature_target", name="Boiler Target Temperature", widget_prefix="BOILER",
+        device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        native_min_value=10.0, native_max_value=84.0, native_step=1.0, mode=NumberMode.BOX,
+    ),
 ]
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback) -> None:

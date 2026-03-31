@@ -29,10 +29,18 @@ POOL_LABELS = {
     "POOL_HEATING_AUTOMATIC": "Automatic",
 }
 
+PROGRAM_LABELS = {
+    "PROGRAM_OFF": "Off",
+    "PROGRAM_BOILER": "Boiler Only",
+    "PROGRAM_AUTOMATIC": "Automatic",
+    "PROGRAM_STOP_FIRING": "Stop Firing",
+}
+
 # (widget_prefix, param_key, entity_name, labels_dict)
 SELECT_CONFIGS = [
     ("HEATING_CIRCUIT", "mode", "Operating Mode", MODE_LABELS),
     ("HEATING_CIRCUIT", "pool_heating", "Pool Heating", POOL_LABELS),
+    ("HEATER", "program", "Program", PROGRAM_LABELS),
 ]
 
 

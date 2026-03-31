@@ -52,6 +52,8 @@
       "outdoor_temperature_average": { "name": "Température extérieure (moyenne)" },
       "heater_state": { "name": "État chaudière" },
       "heater_program": { "name": "Programme" },
+      "device_type": { "name": "Type d'appareil" },
+      "heater_exhaust_guard": { "name": "Surveillance fumées" },
       "fuel_stock": { "name": "Stock combustible" },
       "efficiency": { "name": "Rendement" },
       "flow_temp_current": { "name": "Température départ" },
@@ -59,8 +61,34 @@
       "room_temp_current": { "name": "Température ambiante" },
       "room_temp_target": { "name": "Température ambiante cible" },
       "circuit_state": { "name": "État circuit" },
+      "circuit_active": { "name": "Actif" },
+      "circuit_outdoor_temperature": { "name": "Température extérieure" },
+      "circuit_outdoor_temperature_average": { "name": "Température extérieure (moyenne)" },
       "pump_active": { "name": "Pompe active" },
-      "online_state": { "name": "État connexion" }
+      "online_state": { "name": "État connexion" },
+      "source_temperature": { "name": "Température source" },
+      "request_temperature": { "name": "Température demandée" },
+      "secondary_flow_temp_current": { "name": "Température départ secondaire" },
+      "secondary_flow_temp_target": { "name": "Température départ secondaire cible" },
+      "primary_return_temp_current": { "name": "Température retour primaire" },
+      "controller_program": { "name": "Programme" },
+      "buffer_state": { "name": "État ballon tampon" },
+      "buffer_charge": { "name": "Charge ballon tampon" },
+      "buffer_capacity": { "name": "Capacité ballon tampon" },
+      "buffer_temp_top": { "name": "Température tampon haut" },
+      "buffer_temp_center": { "name": "Température tampon milieu" },
+      "buffer_temp_bottom": { "name": "Température tampon bas" },
+      "buffer_pump_active": { "name": "Pompe tampon active" },
+      "boiler_state": { "name": "État ballon ECS" },
+      "boiler_temp_current": { "name": "Température ballon ECS" },
+      "boiler_temp_target": { "name": "Température cible ballon ECS" },
+      "boiler_charge": { "name": "Charge ballon ECS" },
+      "boiler_pump_active": { "name": "Pompe ballon ECS active" },
+      "circulation_pump_active": { "name": "Pompe de circulation active" },
+      "force_charging_active": { "name": "Charge forcée active" },
+      "event_count": { "name": "Événements actifs" },
+      "latest_event": { "name": "Dernier événement" },
+      "latest_event_type": { "name": "Type dernier événement" }
     },
     "number": {
       "room_temperature_heating": { "name": "Température ambiante jour" },
@@ -69,11 +97,20 @@
       "deactivation_limit_reduction_day": { "name": "Limite abaissement jour" },
       "deactivation_limit_reduction_night": { "name": "Limite abaissement nuit" },
       "steepness": { "name": "Pente courbe de chauffe" },
-      "fuel_stock": { "name": "Stock combustible" }
+      "fuel_stock": { "name": "Stock combustible" },
+      "room_temperature_correction": { "name": "Correction température ambiante" },
+      "boiler_temperature_target": { "name": "Température cible ballon ECS" }
     },
     "select": {
       "mode": { "name": "Mode de fonctionnement" },
-      "pool_heating": { "name": "Chauffage piscine" }
+      "pool_heating": { "name": "Chauffage piscine" },
+      "program": { "name": "Programme" }
+    },
+    "button": {
+      "confirm_all": { "name": "Confirmer tous les événements" },
+      "one_time_circulation": { "name": "Circulation unique" },
+      "force_charging": { "name": "Charge forcée" },
+      "start_ignition": { "name": "Démarrer l'allumage" }
     }
   }
 }

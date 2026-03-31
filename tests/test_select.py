@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock
 from custom_components.hargassner.select import (
     MODE_LABELS,
     POOL_LABELS,
+    PROGRAM_LABELS,
     SELECT_CONFIGS,
     HargassnerSelectEntity,
 )
@@ -27,6 +28,13 @@ def test_mode_labels_are_english():
 def test_pool_labels_are_english():
     for key, label in POOL_LABELS.items():
         assert label in ("Off", "On", "Automatic"), f"Unexpected pool label: {label}"
+
+
+def test_program_labels_are_english():
+    forbidden = set("àâäçéèêëîïôöùûüÿæœÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸÆŒßÄÖÜ")
+    for key, label in PROGRAM_LABELS.items():
+        bad = [c for c in label if c in forbidden]
+        assert not bad, f"Non-English chars in PROGRAM_LABELS['{key}']: '{label}'"
 
 
 def test_select_configs_entity_names_are_english():

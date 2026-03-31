@@ -25,11 +25,12 @@ from .coordinator import HargassnerCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [
-    Platform.SENSOR,
+    Platform.BUTTON,
     Platform.CLIMATE,
     Platform.NUMBER,
-    Platform.SWITCH,
     Platform.SELECT,
+    Platform.SENSOR,
+    Platform.SWITCH,
 ]
 
 SERVICE_SCHEMA = vol.Schema({
