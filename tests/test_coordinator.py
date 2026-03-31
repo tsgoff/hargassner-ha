@@ -8,7 +8,14 @@ from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from custom_components.hargassner.api import HargassnerApiError, HargassnerAuthError
 from custom_components.hargassner.coordinator import HargassnerCoordinator
-from tests.conftest import MOCK_WIDGET_HEATER, MOCK_WIDGET_CIRCUIT
+from tests.conftest import (
+    MOCK_WIDGET_HEATER,
+    MOCK_WIDGET_CIRCUIT,
+    MOCK_WIDGET_BUFFER,
+    MOCK_WIDGET_BOILER,
+    MOCK_WIDGET_CONTROLLER,
+    MOCK_WIDGET_EVENTS,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -123,6 +130,74 @@ async def test_update_data_auth_error_no_cache_raises(hass, mock_api):
 
     with pytest.raises(UpdateFailed, match="Authentication error"):
         await coord._async_update_data()
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_widget(hass, mock_api):
+    """EVENTS widget with list values should be converted to computed dict."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_EVENTS],
+        {"online_state": True},
+    ))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    events_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "EVENTS"), None)
+    assert events_entry is not None
+    assert events_entry["values"]["event_count"] == 1
+    assert events_entry["values"]["latest_event"] == "eCleaner Wartung Antrieb"
+    assert events_entry["values"]["latest_event_type"] == "TYPE_WARNING"
+    assert "confirm_all" in events_entry["actions"]
+
+
+@pytest.mark.asyncio
+async def test_update_data_buffer_widget(hass, mock_api):
+    """BUFFER widget should be parsed correctly."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_BUFFER],
+        {"online_state": True},
+    ))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    buffer_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "BUFFER"), None)
+    assert buffer_entry is not None
+    assert buffer_entry["values"]["buffer_charge"] == 86
+    assert buffer_entry["values"]["buffer_temperature_top"] == 76.5
+
+
+@pytest.mark.asyncio
+async def test_update_data_boiler_widget(hass, mock_api):
+    """BOILER widget should include actions and parameters."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_BOILER],
+        {"online_state": True},
+    ))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    boiler_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "BOILER"), None)
+    assert boiler_entry is not None
+    assert boiler_entry["values"]["boiler_temperature_current"] == 51
+    assert "boiler_temperature_target" in boiler_entry["parameters"]
+    assert "one_time_circulation" in boiler_entry["actions"]
+    assert "force_charging" in boiler_entry["actions"]
+
+
+@pytest.mark.asyncio
+async def test_update_data_controller_widget(hass, mock_api):
+    """HEATING_CIRCUIT_CONTROLLER widget should be parsed correctly."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_CONTROLLER],
+        {"online_state": True},
+    ))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    ctrl_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "HEATING_CIRCUIT_CONTROLLER"), None)
+    assert ctrl_entry is not None
+    assert ctrl_entry["values"]["source_temperature"] == 75
+    assert ctrl_entry["values"]["secondary_flow_temperature_current"] == 64.6
 
 
 @pytest.mark.asyncio

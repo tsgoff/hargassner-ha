@@ -78,7 +78,17 @@ class HargassnerCoordinator(DataUpdateCoordinator):
 
             # --- values : doit être un dict ---
             raw_values = widget.get("values")
-            values = raw_values if isinstance(raw_values, dict) else {}
+            if isinstance(raw_values, dict):
+                values = raw_values
+            elif isinstance(raw_values, list) and widget_type == "EVENTS":
+                # EVENTS widget returns values as a list of event dicts
+                values = {
+                    "event_count": len(raw_values),
+                    "latest_event": raw_values[0].get("text", "") if raw_values else "",
+                    "latest_event_type": raw_values[0].get("event_type", "") if raw_values else "",
+                }
+            else:
+                values = {}
             widget_name = values.get("name", widget_type)
 
             # --- parameters : doit être un dict, filtrer les valeurs non-dict ---

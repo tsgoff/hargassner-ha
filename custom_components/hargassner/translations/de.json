@@ -52,6 +52,8 @@
       "outdoor_temperature_average": { "name": "Außentemperatur (Mittelwert)" },
       "heater_state": { "name": "Kesselzustand" },
       "heater_program": { "name": "Programm" },
+      "device_type": { "name": "Gerätetyp" },
+      "heater_exhaust_guard": { "name": "Abgaswächter" },
       "fuel_stock": { "name": "Brennstoffvorrat" },
       "efficiency": { "name": "Wirkungsgrad" },
       "flow_temp_current": { "name": "Vorlauftemperatur" },
@@ -59,8 +61,34 @@
       "room_temp_current": { "name": "Raumtemperatur" },
       "room_temp_target": { "name": "Raum-Solltemperatur" },
       "circuit_state": { "name": "Kreiszustand" },
+      "circuit_active": { "name": "Aktiv" },
+      "circuit_outdoor_temperature": { "name": "Außentemperatur" },
+      "circuit_outdoor_temperature_average": { "name": "Außentemperatur (Mittelwert)" },
       "pump_active": { "name": "Pumpe aktiv" },
-      "online_state": { "name": "Verbindungsstatus" }
+      "online_state": { "name": "Verbindungsstatus" },
+      "source_temperature": { "name": "Quellentemperatur" },
+      "request_temperature": { "name": "Anforderungstemperatur" },
+      "secondary_flow_temp_current": { "name": "Sekundär-Vorlauftemperatur" },
+      "secondary_flow_temp_target": { "name": "Sekundär-Vorlauf-Solltemperatur" },
+      "primary_return_temp_current": { "name": "Primär-Rücklauftemperatur" },
+      "controller_program": { "name": "Programm" },
+      "buffer_state": { "name": "Pufferzustand" },
+      "buffer_charge": { "name": "Pufferladung" },
+      "buffer_capacity": { "name": "Pufferkapazität" },
+      "buffer_temp_top": { "name": "Puffertemperatur oben" },
+      "buffer_temp_center": { "name": "Puffertemperatur Mitte" },
+      "buffer_temp_bottom": { "name": "Puffertemperatur unten" },
+      "buffer_pump_active": { "name": "Pufferpumpe aktiv" },
+      "boiler_state": { "name": "Boilerzustand" },
+      "boiler_temp_current": { "name": "Boilertemperatur" },
+      "boiler_temp_target": { "name": "Boiler-Solltemperatur" },
+      "boiler_charge": { "name": "Boilerladung" },
+      "boiler_pump_active": { "name": "Boilerpumpe aktiv" },
+      "circulation_pump_active": { "name": "Zirkulationspumpe aktiv" },
+      "force_charging_active": { "name": "Zwangsladung aktiv" },
+      "event_count": { "name": "Aktive Ereignisse" },
+      "latest_event": { "name": "Letztes Ereignis" },
+      "latest_event_type": { "name": "Letzter Ereignistyp" }
     },
     "number": {
       "room_temperature_heating": { "name": "Raumtemperatur Tag" },
@@ -69,11 +97,20 @@
       "deactivation_limit_reduction_day": { "name": "Heizgrenze Absenken Tag" },
       "deactivation_limit_reduction_night": { "name": "Heizgrenze Absenken Nacht" },
       "steepness": { "name": "Heizkurvensteilheit" },
-      "fuel_stock": { "name": "Brennstoffvorrat" }
+      "fuel_stock": { "name": "Brennstoffvorrat" },
+      "room_temperature_correction": { "name": "Raumtemperaturkorrektur" },
+      "boiler_temperature_target": { "name": "Boiler-Solltemperatur" }
     },
     "select": {
       "mode": { "name": "Betriebsart" },
-      "pool_heating": { "name": "Badezimmerheizung" }
+      "pool_heating": { "name": "Badezimmerheizung" },
+      "program": { "name": "Programm" }
+    },
+    "button": {
+      "confirm_all": { "name": "Alle Ereignisse bestätigen" },
+      "one_time_circulation": { "name": "Einmalzirkulation" },
+      "force_charging": { "name": "Zwangsladung" },
+      "start_ignition": { "name": "Zündung starten" }
     }
   }
 }

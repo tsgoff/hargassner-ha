@@ -52,6 +52,8 @@
       "outdoor_temperature_average": { "name": "Outdoor Temperature (Average)" },
       "heater_state": { "name": "Boiler State" },
       "heater_program": { "name": "Program" },
+      "device_type": { "name": "Device Type" },
+      "heater_exhaust_guard": { "name": "Exhaust Guard" },
       "fuel_stock": { "name": "Fuel Stock" },
       "efficiency": { "name": "Efficiency" },
       "flow_temp_current": { "name": "Flow Temperature" },
@@ -59,8 +61,34 @@
       "room_temp_current": { "name": "Room Temperature" },
       "room_temp_target": { "name": "Room Target Temperature" },
       "circuit_state": { "name": "Circuit State" },
+      "circuit_active": { "name": "Active" },
+      "circuit_outdoor_temperature": { "name": "Outdoor Temperature" },
+      "circuit_outdoor_temperature_average": { "name": "Outdoor Temperature (Average)" },
       "pump_active": { "name": "Pump Active" },
-      "online_state": { "name": "Connection State" }
+      "online_state": { "name": "Connection State" },
+      "source_temperature": { "name": "Source Temperature" },
+      "request_temperature": { "name": "Request Temperature" },
+      "secondary_flow_temp_current": { "name": "Secondary Flow Temperature" },
+      "secondary_flow_temp_target": { "name": "Secondary Flow Target Temperature" },
+      "primary_return_temp_current": { "name": "Primary Return Temperature" },
+      "controller_program": { "name": "Program" },
+      "buffer_state": { "name": "Buffer State" },
+      "buffer_charge": { "name": "Buffer Charge" },
+      "buffer_capacity": { "name": "Buffer Capacity" },
+      "buffer_temp_top": { "name": "Buffer Temperature Top" },
+      "buffer_temp_center": { "name": "Buffer Temperature Center" },
+      "buffer_temp_bottom": { "name": "Buffer Temperature Bottom" },
+      "buffer_pump_active": { "name": "Buffer Pump Active" },
+      "boiler_state": { "name": "Boiler State" },
+      "boiler_temp_current": { "name": "Boiler Temperature" },
+      "boiler_temp_target": { "name": "Boiler Target Temperature" },
+      "boiler_charge": { "name": "Boiler Charge" },
+      "boiler_pump_active": { "name": "Boiler Pump Active" },
+      "circulation_pump_active": { "name": "Circulation Pump Active" },
+      "force_charging_active": { "name": "Force Charging Active" },
+      "event_count": { "name": "Active Events" },
+      "latest_event": { "name": "Latest Event" },
+      "latest_event_type": { "name": "Latest Event Type" }
     },
     "number": {
       "room_temperature_heating": { "name": "Room Temperature Day" },
@@ -69,11 +97,20 @@
       "deactivation_limit_reduction_day": { "name": "Heating Limit Setback Day" },
       "deactivation_limit_reduction_night": { "name": "Heating Limit Setback Night" },
       "steepness": { "name": "Heating Curve Slope" },
-      "fuel_stock": { "name": "Fuel Stock" }
+      "fuel_stock": { "name": "Fuel Stock" },
+      "room_temperature_correction": { "name": "Room Temperature Correction" },
+      "boiler_temperature_target": { "name": "Boiler Target Temperature" }
     },
     "select": {
       "mode": { "name": "Operating Mode" },
-      "pool_heating": { "name": "Pool Heating" }
+      "pool_heating": { "name": "Pool Heating" },
+      "program": { "name": "Program" }
+    },
+    "button": {
+      "confirm_all": { "name": "Confirm All Events" },
+      "one_time_circulation": { "name": "One-Time Circulation" },
+      "force_charging": { "name": "Force Charging" },
+      "start_ignition": { "name": "Start Ignition" }
     }
   }
 }

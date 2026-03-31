@@ -16,6 +16,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
     PERCENTAGE,
     UnitOfTemperature,
+    UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -119,6 +120,26 @@ SENSOR_DESCRIPTIONS: list[tuple[str, str, HargassnerSensorDescription]] = [
     ),
     (
         "HEATER",
+        "device_type",
+        HargassnerSensorDescription(
+            key="device_type",
+            name="Device Type",
+            value_key="device_type",
+            icon="mdi:information-outline",
+        ),
+    ),
+    (
+        "HEATER",
+        "heater_exhaust_guard",
+        HargassnerSensorDescription(
+            key="heater_exhaust_guard",
+            name="Exhaust Guard",
+            value_key="heater_exhaust_guard",
+            icon="mdi:shield-alert",
+        ),
+    ),
+    (
+        "HEATER",
         "fuel_stock",
         HargassnerSensorDescription(
             key="fuel_stock",
@@ -208,6 +229,301 @@ SENSOR_DESCRIPTIONS: list[tuple[str, str, HargassnerSensorDescription]] = [
             name="Pump Active",
             value_key="pump_active",
             icon="mdi:pump",
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "outdoor_temperature",
+        HargassnerSensorDescription(
+            key="circuit_outdoor_temperature",
+            name="Outdoor Temperature",
+            value_key="outdoor_temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "outdoor_temperature_average",
+        HargassnerSensorDescription(
+            key="circuit_outdoor_temperature_average",
+            name="Outdoor Temperature (Average)",
+            value_key="outdoor_temperature_average",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "active",
+        HargassnerSensorDescription(
+            key="circuit_active",
+            name="Active",
+            value_key="active",
+            icon="mdi:radiator",
+        ),
+    ),
+    # --- HEATING_CIRCUIT_CONTROLLER ---
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "source_temperature",
+        HargassnerSensorDescription(
+            key="source_temperature",
+            name="Source Temperature",
+            value_key="source_temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "request_temperature",
+        HargassnerSensorDescription(
+            key="request_temperature",
+            name="Request Temperature",
+            value_key="request_temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "secondary_flow_temperature_current",
+        HargassnerSensorDescription(
+            key="secondary_flow_temp_current",
+            name="Secondary Flow Temperature",
+            value_key="secondary_flow_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "secondary_flow_temperature_target",
+        HargassnerSensorDescription(
+            key="secondary_flow_temp_target",
+            name="Secondary Flow Target Temperature",
+            value_key="secondary_flow_temperature_target",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "primary_return_temperature_current",
+        HargassnerSensorDescription(
+            key="primary_return_temp_current",
+            name="Primary Return Temperature",
+            value_key="primary_return_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT_CONTROLLER",
+        "program",
+        HargassnerSensorDescription(
+            key="controller_program",
+            name="Program",
+            value_key="program",
+            icon="mdi:calendar-clock",
+        ),
+    ),
+    # --- BUFFER ---
+    (
+        "BUFFER",
+        "state",
+        HargassnerSensorDescription(
+            key="buffer_state",
+            name="Buffer State",
+            value_key="state",
+            icon="mdi:water-boiler",
+        ),
+    ),
+    (
+        "BUFFER",
+        "buffer_charge",
+        HargassnerSensorDescription(
+            key="buffer_charge",
+            name="Buffer Charge",
+            value_key="buffer_charge",
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:battery-charging",
+        ),
+    ),
+    (
+        "BUFFER",
+        "capacity",
+        HargassnerSensorDescription(
+            key="buffer_capacity",
+            name="Buffer Capacity",
+            value_key="capacity",
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfVolume.LITERS,
+            icon="mdi:water",
+        ),
+    ),
+    (
+        "BUFFER",
+        "buffer_temperature_top",
+        HargassnerSensorDescription(
+            key="buffer_temp_top",
+            name="Buffer Temperature Top",
+            value_key="buffer_temperature_top",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "BUFFER",
+        "buffer_temperature_center",
+        HargassnerSensorDescription(
+            key="buffer_temp_center",
+            name="Buffer Temperature Center",
+            value_key="buffer_temperature_center",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "BUFFER",
+        "buffer_temperature_bottom",
+        HargassnerSensorDescription(
+            key="buffer_temp_bottom",
+            name="Buffer Temperature Bottom",
+            value_key="buffer_temperature_bottom",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "BUFFER",
+        "pump_active",
+        HargassnerSensorDescription(
+            key="buffer_pump_active",
+            name="Pump Active",
+            value_key="pump_active",
+            icon="mdi:pump",
+        ),
+    ),
+    # --- BOILER ---
+    (
+        "BOILER",
+        "state",
+        HargassnerSensorDescription(
+            key="boiler_state",
+            name="Boiler State",
+            value_key="state",
+            icon="mdi:water-boiler",
+        ),
+    ),
+    (
+        "BOILER",
+        "boiler_temperature_current",
+        HargassnerSensorDescription(
+            key="boiler_temp_current",
+            name="Boiler Temperature",
+            value_key="boiler_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "BOILER",
+        "boiler_temperature_target",
+        HargassnerSensorDescription(
+            key="boiler_temp_target",
+            name="Boiler Target Temperature",
+            value_key="boiler_temperature_target",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "BOILER",
+        "boiler_charge",
+        HargassnerSensorDescription(
+            key="boiler_charge",
+            name="Boiler Charge",
+            value_key="boiler_charge",
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:battery-charging",
+        ),
+    ),
+    (
+        "BOILER",
+        "pump_active",
+        HargassnerSensorDescription(
+            key="boiler_pump_active",
+            name="Pump Active",
+            value_key="pump_active",
+            icon="mdi:pump",
+        ),
+    ),
+    (
+        "BOILER",
+        "circulation_pump_active",
+        HargassnerSensorDescription(
+            key="circulation_pump_active",
+            name="Circulation Pump Active",
+            value_key="circulation_pump_active",
+            icon="mdi:pump",
+        ),
+    ),
+    (
+        "BOILER",
+        "force_charging_active",
+        HargassnerSensorDescription(
+            key="force_charging_active",
+            name="Force Charging Active",
+            value_key="force_charging_active",
+            icon="mdi:lightning-bolt",
+        ),
+    ),
+    # --- EVENTS ---
+    (
+        "EVENTS",
+        "event_count",
+        HargassnerSensorDescription(
+            key="event_count",
+            name="Active Events",
+            value_key="event_count",
+            state_class=SensorStateClass.MEASUREMENT,
+            icon="mdi:alert-circle",
+        ),
+    ),
+    (
+        "EVENTS",
+        "latest_event",
+        HargassnerSensorDescription(
+            key="latest_event",
+            name="Latest Event",
+            value_key="latest_event",
+            icon="mdi:alert",
+        ),
+    ),
+    (
+        "EVENTS",
+        "latest_event_type",
+        HargassnerSensorDescription(
+            key="latest_event_type",
+            name="Latest Event Type",
+            value_key="latest_event_type",
+            icon="mdi:alert-outline",
         ),
     ),
 ]
