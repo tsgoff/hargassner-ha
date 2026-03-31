@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 from homeassistant import config_entries, data_entry_flow
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
@@ -20,6 +20,7 @@ from tests.conftest import MOCK_INSTALLATIONS
 
 
 PATCH_API = "custom_components.hargassner.config_flow.HargassnerApi"
+PATCH_CLIENT_SESSION = "custom_components.hargassner.config_flow.async_get_clientsession"
 PATCH_SETUP_ENTRY = "custom_components.hargassner.async_setup_entry"
 
 
@@ -30,7 +31,11 @@ PATCH_SETUP_ENTRY = "custom_components.hargassner.async_setup_entry"
 @pytest.mark.asyncio
 async def test_config_flow_single_installation(hass):
     """With one installation, the flow completes without the extra selection step."""
-    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+    with (
+        patch(PATCH_API) as MockApi,
+        patch(PATCH_CLIENT_SESSION, return_value=MagicMock()),
+        patch(PATCH_SETUP_ENTRY, return_value=True),
+    ):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
@@ -61,7 +66,11 @@ async def test_config_flow_multiple_installations_select_one(hass):
         {"id": "42", "name": "Home"},
         {"id": "99", "name": "Office"},
     ]
-    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+    with (
+        patch(PATCH_API) as MockApi,
+        patch(PATCH_CLIENT_SESSION, return_value=MagicMock()),
+        patch(PATCH_SETUP_ENTRY, return_value=True),
+    ):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=installations)
@@ -92,7 +101,11 @@ async def test_config_flow_multiple_installations_select_many(hass):
         {"id": "42", "name": "Home"},
         {"id": "99", "name": "Office"},
     ]
-    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+    with (
+        patch(PATCH_API) as MockApi,
+        patch(PATCH_CLIENT_SESSION, return_value=MagicMock()),
+        patch(PATCH_SETUP_ENTRY, return_value=True),
+    ):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=installations)
@@ -127,7 +140,7 @@ async def test_config_flow_multiple_installations_select_many(hass):
 
 @pytest.mark.asyncio
 async def test_config_flow_invalid_auth(hass):
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_CLIENT_SESSION, return_value=MagicMock()):
         instance = MockApi.return_value
         instance.login = AsyncMock(side_effect=HargassnerAuthError("Bad credentials"))
 
@@ -144,7 +157,7 @@ async def test_config_flow_invalid_auth(hass):
 
 @pytest.mark.asyncio
 async def test_config_flow_cannot_connect(hass):
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_CLIENT_SESSION, return_value=MagicMock()):
         instance = MockApi.return_value
         instance.login = AsyncMock(side_effect=HargassnerApiError("Timeout"))
 
@@ -160,7 +173,7 @@ async def test_config_flow_cannot_connect(hass):
 
 @pytest.mark.asyncio
 async def test_config_flow_no_installations(hass):
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_CLIENT_SESSION, return_value=MagicMock()):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=[])
@@ -177,7 +190,7 @@ async def test_config_flow_no_installations(hass):
 
 @pytest.mark.asyncio
 async def test_config_flow_unknown_error(hass):
-    with patch(PATCH_API) as MockApi:
+    with patch(PATCH_API) as MockApi, patch(PATCH_CLIENT_SESSION, return_value=MagicMock()):
         instance = MockApi.return_value
         instance.login = AsyncMock(side_effect=RuntimeError("Something went very wrong"))
 
@@ -198,7 +211,11 @@ async def test_config_flow_unknown_error(hass):
 @pytest.mark.asyncio
 async def test_config_flow_already_configured(hass):
     """Trying to add the same installation twice should abort."""
-    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+    with (
+        patch(PATCH_API) as MockApi,
+        patch(PATCH_CLIENT_SESSION, return_value=MagicMock()),
+        patch(PATCH_SETUP_ENTRY, return_value=True),
+    ):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
@@ -213,7 +230,11 @@ async def test_config_flow_already_configured(hass):
         )
 
     # Second setup attempt
-    with patch(PATCH_API) as MockApi, patch(PATCH_SETUP_ENTRY, return_value=True):
+    with (
+        patch(PATCH_API) as MockApi,
+        patch(PATCH_CLIENT_SESSION, return_value=MagicMock()),
+        patch(PATCH_SETUP_ENTRY, return_value=True),
+    ):
         instance = MockApi.return_value
         instance.login = AsyncMock()
         instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
