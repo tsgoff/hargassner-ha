@@ -1,0 +1,248 @@
+"""Tests for the Hargassner config flow."""
+from __future__ import annotations
+
+import pytest
+from unittest.mock import AsyncMock, MagicMock, patch
+
+from homeassistant import config_entries, data_entry_flow
+from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
+
+from custom_components.hargassner.api import HargassnerApiError, HargassnerAuthError
+from custom_components.hargassner.const import (
+    CONF_INSTALLATION_ID,
+    CONF_SCAN_INTERVAL,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+)
+from tests.conftest import MOCK_INSTALLATIONS
+
+
+PATCH_API = "custom_components.hargassner.config_flow.HargassnerApi"
+
+
+# ---------------------------------------------------------------------------
+# Single installation (auto-select)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_config_flow_single_installation(hass):
+    """With one installation, the flow completes without the extra selection step."""
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        assert result["type"] == data_entry_flow.FlowResultType.FORM
+        assert result["step_id"] == "user"
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+        assert result["data"][CONF_EMAIL] == "test@example.com"
+        assert result["data"][CONF_INSTALLATION_ID] == "42"
+
+
+# ---------------------------------------------------------------------------
+# Multiple installations (selection step)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_config_flow_multiple_installations(hass):
+    """With multiple installations, an extra selection step is shown."""
+    installations = [
+        {"id": "42", "name": "Home"},
+        {"id": "99", "name": "Office"},
+    ]
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=installations)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        # Should land on installation step
+        assert result["type"] == data_entry_flow.FlowResultType.FORM
+        assert result["step_id"] == "installation"
+
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_INSTALLATION_ID: "99"},
+        )
+        assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+        assert result["data"][CONF_INSTALLATION_ID] == "99"
+        assert result["title"] == "Office"
+
+
+# ---------------------------------------------------------------------------
+# Error cases
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_config_flow_invalid_auth(hass):
+    """Wrong credentials should show an error, not create an entry."""
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock(side_effect=HargassnerAuthError("Bad credentials"))
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "bad@example.com", CONF_PASSWORD: "wrong"},
+        )
+        assert result["type"] == data_entry_flow.FlowResultType.FORM
+        assert result["errors"]["base"] == "invalid_auth"
+
+
+@pytest.mark.asyncio
+async def test_config_flow_cannot_connect(hass):
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock(side_effect=HargassnerApiError("Timeout"))
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["errors"]["base"] == "cannot_connect"
+
+
+@pytest.mark.asyncio
+async def test_config_flow_no_installations(hass):
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=[])
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["errors"]["base"] == "no_installations"
+
+
+@pytest.mark.asyncio
+async def test_config_flow_unknown_error(hass):
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock(side_effect=RuntimeError("Something went very wrong"))
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["errors"]["base"] == "unknown"
+
+
+# ---------------------------------------------------------------------------
+# Already configured (abort)
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_config_flow_already_configured(hass):
+    """Trying to add the same installation twice should abort."""
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
+
+        # First setup
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+
+    # Second setup attempt
+    with patch(PATCH_API) as MockApi:
+        instance = MockApi.return_value
+        instance.login = AsyncMock()
+        instance.get_installations = AsyncMock(return_value=MOCK_INSTALLATIONS)
+
+        result = await hass.config_entries.flow.async_init(
+            DOMAIN, context={"source": config_entries.SOURCE_USER}
+        )
+        result = await hass.config_entries.flow.async_configure(
+            result["flow_id"],
+            user_input={CONF_EMAIL: "test@example.com", CONF_PASSWORD: "secret"},
+        )
+        assert result["type"] == data_entry_flow.FlowResultType.ABORT
+        assert result["reason"] == "already_configured"
+
+
+# ---------------------------------------------------------------------------
+# Options flow
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_options_flow_changes_scan_interval(hass):
+    """Options flow should allow changing the scan interval."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        data={
+            CONF_EMAIL: "test@example.com",
+            CONF_PASSWORD: "secret",
+            CONF_INSTALLATION_ID: "42",
+            "installation_name": "My Hargassner",
+        },
+        options={CONF_SCAN_INTERVAL: DEFAULT_SCAN_INTERVAL},
+    )
+    entry.add_to_hass(hass)
+
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert result["type"] == data_entry_flow.FlowResultType.FORM
+    assert result["step_id"] == "init"
+
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"],
+        user_input={CONF_SCAN_INTERVAL: 120},
+    )
+    assert result["type"] == data_entry_flow.FlowResultType.CREATE_ENTRY
+    assert entry.options[CONF_SCAN_INTERVAL] == 120
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+from homeassistant.config_entries import ConfigEntry
+from homeassistant.core import HomeAssistant
+
+
+class MockConfigEntry(config_entries.ConfigEntry):
+    """Minimal mock config entry for options flow tests."""
+
+    def __init__(self, domain, data, options=None):
+        super().__init__(
+            version=1,
+            minor_version=1,
+            domain=domain,
+            title="Test",
+            data=data,
+            options=options or {},
+            source=config_entries.SOURCE_USER,
+            entry_id="test_entry_id",
+            unique_id=f"hargassner_{data.get(CONF_INSTALLATION_ID, '42')}",
+        )

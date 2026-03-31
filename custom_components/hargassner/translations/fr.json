@@ -1,0 +1,79 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connexion à Hargassner",
+        "description": "Entrez vos identifiants de l'application Hargassner.",
+        "data": {
+          "email": "E-mail",
+          "password": "Mot de passe"
+        }
+      },
+      "installation": {
+        "title": "Choisir l'installation",
+        "description": "Plusieurs installations trouvées. Veuillez en sélectionner une.",
+        "data": {
+          "installation_id": "Installation"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "E-mail ou mot de passe invalide.",
+      "cannot_connect": "Impossible de se connecter à l'API Hargassner.",
+      "no_installations": "Aucune installation trouvée pour ce compte.",
+      "unknown": "Erreur inattendue. Veuillez vérifier les journaux."
+    },
+    "abort": {
+      "already_configured": "Cette installation est déjà configurée."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options Hargassner",
+        "data": {
+          "scan_interval": "Intervalle de mise à jour (secondes)"
+        }
+      }
+    }
+  },
+  "services": {
+    "start_ignition": {
+      "name": "Démarrer l'allumage",
+      "description": "Lance la séquence d'allumage de la chaudière."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "heater_temp_current": { "name": "Température chaudière" },
+      "heater_temp_target": { "name": "Température cible chaudière" },
+      "smoke_temperature": { "name": "Température fumées" },
+      "outdoor_temperature": { "name": "Température extérieure" },
+      "outdoor_temperature_average": { "name": "Température extérieure (moyenne)" },
+      "heater_state": { "name": "État chaudière" },
+      "heater_program": { "name": "Programme" },
+      "fuel_stock": { "name": "Stock combustible" },
+      "efficiency": { "name": "Rendement" },
+      "flow_temp_current": { "name": "Température départ" },
+      "flow_temp_target": { "name": "Température départ cible" },
+      "room_temp_current": { "name": "Température ambiante" },
+      "room_temp_target": { "name": "Température ambiante cible" },
+      "circuit_state": { "name": "État circuit" },
+      "pump_active": { "name": "Pompe active" },
+      "online_state": { "name": "État connexion" }
+    },
+    "number": {
+      "room_temperature_heating": { "name": "Température ambiante jour" },
+      "room_temperature_reduction": { "name": "Température ambiante nuit" },
+      "deactivation_limit_heating": { "name": "Limite chauffage jour" },
+      "deactivation_limit_reduction_day": { "name": "Limite abaissement jour" },
+      "deactivation_limit_reduction_night": { "name": "Limite abaissement nuit" },
+      "steepness": { "name": "Pente courbe de chauffe" },
+      "fuel_stock": { "name": "Stock combustible" }
+    },
+    "select": {
+      "mode": { "name": "Mode de fonctionnement" },
+      "pool_heating": { "name": "Chauffage piscine" }
+    }
+  }
+}

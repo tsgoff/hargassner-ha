@@ -17,24 +17,24 @@ _LOGGER = logging.getLogger(__name__)
 
 # Friendly labels for mode values
 MODE_LABELS = {
-    "MODE_OFF": "Arrêt",
-    "MODE_AUTOMATIC": "Automatique",
-    "MODE_HEATING": "Chauffage",
-    "MODE_REDUCTION": "Réduit",
-    "MODE_BRIDGE_REDUCTION": "Pont réduit",
-    "MODE_BRIDGE_HEATING": "Pont chauffage",
+    "MODE_OFF": "Off",
+    "MODE_AUTOMATIC": "Automatic",
+    "MODE_HEATING": "Heating",
+    "MODE_REDUCTION": "Setback",
+    "MODE_BRIDGE_REDUCTION": "Override Setback",
+    "MODE_BRIDGE_HEATING": "Override Heating",
 }
 
 POOL_LABELS = {
-    "POOL_HEATING_OFF": "Arrêt",
-    "POOL_HEATING_ON": "Marche",
-    "POOL_HEATING_AUTOMATIC": "Automatique",
+    "POOL_HEATING_OFF": "Off",
+    "POOL_HEATING_ON": "On",
+    "POOL_HEATING_AUTOMATIC": "Automatic",
 }
 
 # (widget_prefix, param_key, entity_name, labels_dict)
 SELECT_CONFIGS = [
-    ("HEATING_CIRCUIT", "mode", "Mode circuit", MODE_LABELS),
-    ("HEATING_CIRCUIT", "pool_heating", "Chauffage salle de bain", POOL_LABELS),
+    ("HEATING_CIRCUIT", "mode", "Operating Mode", MODE_LABELS),
+    ("HEATING_CIRCUIT", "pool_heating", "Pool Heating", POOL_LABELS),
 ]
 
 

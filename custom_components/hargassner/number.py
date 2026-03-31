@@ -19,37 +19,37 @@ class HargassnerNumberDescription(NumberEntityDescription):
 
 NUMBER_DESCRIPTIONS: list[HargassnerNumberDescription] = [
     HargassnerNumberDescription(
-        key="room_temperature_heating", name="Température jour", widget_prefix="HEATING_CIRCUIT",
+        key="room_temperature_heating", name="Room Temperature Day", widget_prefix="HEATING_CIRCUIT",
         device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         native_min_value=14.0, native_max_value=26.0, native_step=0.5, mode=NumberMode.BOX,
     ),
     HargassnerNumberDescription(
-        key="room_temperature_reduction", name="Température nuit", widget_prefix="HEATING_CIRCUIT",
+        key="room_temperature_reduction", name="Room Temperature Night", widget_prefix="HEATING_CIRCUIT",
         device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         native_min_value=8.0, native_max_value=24.0, native_step=0.5, mode=NumberMode.BOX,
     ),
     HargassnerNumberDescription(
-        key="deactivation_limit_heating", name="Limite désactivation chauffage", widget_prefix="HEATING_CIRCUIT",
+        key="deactivation_limit_heating", name="Heating Limit Day", widget_prefix="HEATING_CIRCUIT",
         device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         native_min_value=0.0, native_max_value=50.0, native_step=1.0, mode=NumberMode.BOX,
     ),
     HargassnerNumberDescription(
-        key="deactivation_limit_reduction_day", name="Limite désactivation réduit jour", widget_prefix="HEATING_CIRCUIT",
+        key="deactivation_limit_reduction_day", name="Heating Limit Setback Day", widget_prefix="HEATING_CIRCUIT",
         device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         native_min_value=-40.0, native_max_value=50.0, native_step=1.0, mode=NumberMode.BOX,
     ),
     HargassnerNumberDescription(
-        key="deactivation_limit_reduction_night", name="Limite désactivation réduit nuit", widget_prefix="HEATING_CIRCUIT",
+        key="deactivation_limit_reduction_night", name="Heating Limit Setback Night", widget_prefix="HEATING_CIRCUIT",
         device_class=NumberDeviceClass.TEMPERATURE, native_unit_of_measurement=UnitOfTemperature.CELSIUS,
         native_min_value=-40.0, native_max_value=50.0, native_step=1.0, mode=NumberMode.BOX,
     ),
     HargassnerNumberDescription(
-        key="steepness", name="Pente courbe de chauffe", widget_prefix="HEATING_CIRCUIT",
+        key="steepness", name="Heating Curve Slope", widget_prefix="HEATING_CIRCUIT",
         native_unit_of_measurement="", native_min_value=0.2, native_max_value=3.5, native_step=0.05,
         mode=NumberMode.SLIDER, icon="mdi:slope-uphill",
     ),
     HargassnerNumberDescription(
-        key="fuel_stock", name="Stock combustible", widget_prefix="HEATER",
+        key="fuel_stock", name="Fuel Stock", widget_prefix="HEATER",
         native_unit_of_measurement="kg", native_min_value=0.0, native_max_value=32000.0,
         native_step=1.0, mode=NumberMode.BOX, icon="mdi:sack",
     ),

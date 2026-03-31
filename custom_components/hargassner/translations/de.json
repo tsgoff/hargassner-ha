@@ -1,0 +1,79 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbindung mit Hargassner",
+        "description": "Geben Sie Ihre Hargassner-App-Zugangsdaten ein.",
+        "data": {
+          "email": "E-Mail",
+          "password": "Passwort"
+        }
+      },
+      "installation": {
+        "title": "Installation wählen",
+        "description": "Mehrere Installationen gefunden. Diese bitte auswählen.",
+        "data": {
+          "installation_id": "Installation"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "E-Mail oder Passwort ungültig.",
+      "cannot_connect": "Verbindung zur Hargassner-API nicht möglich.",
+      "no_installations": "Keine Installationen für dieses Konto gefunden.",
+      "unknown": "Unerwarteter Fehler. Bitte prüfen Sie die Logs."
+    },
+    "abort": {
+      "already_configured": "Diese Installation ist bereits konfiguriert."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Hargassner Optionen",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall (Sekunden)"
+        }
+      }
+    }
+  },
+  "services": {
+    "start_ignition": {
+      "name": "Zündung starten",
+      "description": "Startet den Zündvorgang des Kessels."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "heater_temp_current": { "name": "Kesseltemperatur" },
+      "heater_temp_target": { "name": "Kessel-Solltemperatur" },
+      "smoke_temperature": { "name": "Abgastemperatur" },
+      "outdoor_temperature": { "name": "Außentemperatur" },
+      "outdoor_temperature_average": { "name": "Außentemperatur (Mittelwert)" },
+      "heater_state": { "name": "Kesselzustand" },
+      "heater_program": { "name": "Programm" },
+      "fuel_stock": { "name": "Brennstoffvorrat" },
+      "efficiency": { "name": "Wirkungsgrad" },
+      "flow_temp_current": { "name": "Vorlauftemperatur" },
+      "flow_temp_target": { "name": "Vorlauf-Solltemperatur" },
+      "room_temp_current": { "name": "Raumtemperatur" },
+      "room_temp_target": { "name": "Raum-Solltemperatur" },
+      "circuit_state": { "name": "Kreiszustand" },
+      "pump_active": { "name": "Pumpe aktiv" },
+      "online_state": { "name": "Verbindungsstatus" }
+    },
+    "number": {
+      "room_temperature_heating": { "name": "Raumtemperatur Tag" },
+      "room_temperature_reduction": { "name": "Raumtemperatur Nacht" },
+      "deactivation_limit_heating": { "name": "Heizgrenze Tag" },
+      "deactivation_limit_reduction_day": { "name": "Heizgrenze Absenken Tag" },
+      "deactivation_limit_reduction_night": { "name": "Heizgrenze Absenken Nacht" },
+      "steepness": { "name": "Heizkurvensteilheit" },
+      "fuel_stock": { "name": "Brennstoffvorrat" }
+    },
+    "select": {
+      "mode": { "name": "Betriebsart" },
+      "pool_heating": { "name": "Badezimmerheizung" }
+    }
+  }
+}

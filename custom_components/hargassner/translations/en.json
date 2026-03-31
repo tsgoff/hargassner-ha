@@ -2,45 +2,78 @@
   "config": {
     "step": {
       "user": {
-        "title": "Connexion à Hargassner",
-        "description": "Entrez vos identifiants de l'app Hargassner.",
+        "title": "Connect to Hargassner",
+        "description": "Enter your Hargassner app credentials.",
         "data": {
           "email": "Email",
-          "password": "Mot de passe"
+          "password": "Password"
         }
       },
       "installation": {
-        "title": "Choisir l'installation",
-        "description": "Plusieurs installations trouvées. Choisissez-en une.",
+        "title": "Choose Installation",
+        "description": "Multiple installations found. Please select one.",
         "data": {
           "installation_id": "Installation"
         }
       }
     },
     "error": {
-      "invalid_auth": "Email ou mot de passe incorrect.",
-      "cannot_connect": "Impossible de se connecter à l'API Hargassner.",
-      "no_installations": "Aucune installation trouvée pour ce compte.",
-      "unknown": "Erreur inattendue. Consultez les journaux."
+      "invalid_auth": "Invalid email or password.",
+      "cannot_connect": "Failed to connect to Hargassner API.",
+      "no_installations": "No installations found for this account.",
+      "unknown": "Unexpected error. Please check the logs."
     },
     "abort": {
-      "already_configured": "Cette installation est déjà configurée."
+      "already_configured": "This installation is already configured."
     }
   },
   "options": {
     "step": {
       "init": {
-        "title": "Options Hargassner",
+        "title": "Hargassner Options",
         "data": {
-          "scan_interval": "Intervalle de mise à jour (secondes)"
+          "scan_interval": "Update interval (seconds)"
         }
       }
     }
   },
   "services": {
     "start_ignition": {
-      "name": "Démarrer l'allumage",
-      "description": "Déclenche la séquence d'allumage de la chaudière."
+      "name": "Start ignition",
+      "description": "Starts the boiler's ignition sequence."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "heater_temp_current": { "name": "Boiler Temperature" },
+      "heater_temp_target": { "name": "Boiler Target Temperature" },
+      "smoke_temperature": { "name": "Flue Gas Temperature" },
+      "outdoor_temperature": { "name": "Outdoor Temperature" },
+      "outdoor_temperature_average": { "name": "Outdoor Temperature (Average)" },
+      "heater_state": { "name": "Boiler State" },
+      "heater_program": { "name": "Program" },
+      "fuel_stock": { "name": "Fuel Stock" },
+      "efficiency": { "name": "Efficiency" },
+      "flow_temp_current": { "name": "Flow Temperature" },
+      "flow_temp_target": { "name": "Flow Target Temperature" },
+      "room_temp_current": { "name": "Room Temperature" },
+      "room_temp_target": { "name": "Room Target Temperature" },
+      "circuit_state": { "name": "Circuit State" },
+      "pump_active": { "name": "Pump Active" },
+      "online_state": { "name": "Connection State" }
+    },
+    "number": {
+      "room_temperature_heating": { "name": "Room Temperature Day" },
+      "room_temperature_reduction": { "name": "Room Temperature Night" },
+      "deactivation_limit_heating": { "name": "Heating Limit Day" },
+      "deactivation_limit_reduction_day": { "name": "Heating Limit Setback Day" },
+      "deactivation_limit_reduction_night": { "name": "Heating Limit Setback Night" },
+      "steepness": { "name": "Heating Curve Slope" },
+      "fuel_stock": { "name": "Fuel Stock" }
+    },
+    "select": {
+      "mode": { "name": "Operating Mode" },
+      "pool_heating": { "name": "Pool Heating" }
     }
   }
 }

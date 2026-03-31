@@ -1,4 +1,5 @@
 """Sensor entities for Hargassner."""
+
 from __future__ import annotations
 
 import logging
@@ -29,125 +30,186 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class HargassnerSensorDescription(SensorEntityDescription):
     """Describes a Hargassner sensor."""
+
     value_key: str = ""
 
 
 # (widget_type_prefix, value_key, description)
 SENSOR_DESCRIPTIONS: list[tuple[str, str, HargassnerSensorDescription]] = [
     # --- HEATER ---
-    ("HEATER", "heater_temperature_current", HargassnerSensorDescription(
-        key="heater_temp_current",
-        name="Température chaudière",
-        value_key="heater_temperature_current",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATER", "heater_temperature_target", HargassnerSensorDescription(
-        key="heater_temp_target",
-        name="Température cible chaudière",
-        value_key="heater_temperature_target",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATER", "smoke_temperature", HargassnerSensorDescription(
-        key="smoke_temperature",
-        name="Température fumées",
-        value_key="smoke_temperature",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATER", "outdoor_temperature", HargassnerSensorDescription(
-        key="outdoor_temperature",
-        name="Température extérieure",
-        value_key="outdoor_temperature",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATER", "outdoor_temperature_average", HargassnerSensorDescription(
-        key="outdoor_temperature_average",
-        name="Température extérieure (moyenne)",
-        value_key="outdoor_temperature_average",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATER", "state", HargassnerSensorDescription(
-        key="heater_state",
-        name="État chaudière",
-        value_key="state",
-        icon="mdi:fire",
-    )),
-    ("HEATER", "program", HargassnerSensorDescription(
-        key="heater_program",
-        name="Programme",
-        value_key="program",
-        icon="mdi:calendar-clock",
-    )),
-    ("HEATER", "fuel_stock", HargassnerSensorDescription(
-        key="fuel_stock",
-        name="Stock combustible",
-        value_key="fuel_stock",
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement="kg",
-        icon="mdi:sack",
-    )),
-    ("HEATER", "efficiency", HargassnerSensorDescription(
-        key="efficiency",
-        name="Rendement",
-        value_key="efficiency",
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=PERCENTAGE,
-        icon="mdi:gauge",
-    )),
+    (
+        "HEATER",
+        "heater_temperature_current",
+        HargassnerSensorDescription(
+            key="heater_temp_current",
+            name="Boiler Temperature",
+            value_key="heater_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATER",
+        "heater_temperature_target",
+        HargassnerSensorDescription(
+            key="heater_temp_target",
+            name="Boiler Target Temperature",
+            value_key="heater_temperature_target",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATER",
+        "smoke_temperature",
+        HargassnerSensorDescription(
+            key="smoke_temperature",
+            name="Flue Gas Temperature",
+            value_key="smoke_temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATER",
+        "outdoor_temperature",
+        HargassnerSensorDescription(
+            key="outdoor_temperature",
+            name="Outdoor Temperature",
+            value_key="outdoor_temperature",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATER",
+        "outdoor_temperature_average",
+        HargassnerSensorDescription(
+            key="outdoor_temperature_average",
+            name="Outdoor Temperature (Average)",
+            value_key="outdoor_temperature_average",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATER",
+        "state",
+        HargassnerSensorDescription(
+            key="heater_state",
+            name="Boiler State",
+            value_key="state",
+            icon="mdi:fire",
+        ),
+    ),
+    (
+        "HEATER",
+        "program",
+        HargassnerSensorDescription(
+            key="heater_program",
+            name="Program",
+            value_key="program",
+            icon="mdi:calendar-clock",
+        ),
+    ),
+    (
+        "HEATER",
+        "fuel_stock",
+        HargassnerSensorDescription(
+            key="fuel_stock",
+            name="Fuel Stock",
+            value_key="fuel_stock",
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement="kg",
+            icon="mdi:sack",
+        ),
+    ),
+    (
+        "HEATER",
+        "efficiency",
+        HargassnerSensorDescription(
+            key="efficiency",
+            name="Efficiency",
+            value_key="efficiency",
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=PERCENTAGE,
+            icon="mdi:gauge",
+        ),
+    ),
     # --- HEATING CIRCUIT ---
-    ("HEATING_CIRCUIT", "flow_temperature_current", HargassnerSensorDescription(
-        key="flow_temp_current",
-        name="Température départ",
-        value_key="flow_temperature_current",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATING_CIRCUIT", "flow_temperature_target", HargassnerSensorDescription(
-        key="flow_temp_target",
-        name="Température départ cible",
-        value_key="flow_temperature_target",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATING_CIRCUIT", "room_temperature_current", HargassnerSensorDescription(
-        key="room_temp_current",
-        name="Température ambiante",
-        value_key="room_temperature_current",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATING_CIRCUIT", "room_temperature_target", HargassnerSensorDescription(
-        key="room_temp_target",
-        name="Température ambiante cible",
-        value_key="room_temperature_target",
-        device_class=SensorDeviceClass.TEMPERATURE,
-        state_class=SensorStateClass.MEASUREMENT,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
-    )),
-    ("HEATING_CIRCUIT", "state", HargassnerSensorDescription(
-        key="circuit_state",
-        name="État circuit",
-        value_key="state",
-        icon="mdi:radiator",
-    )),
-    ("HEATING_CIRCUIT", "pump_active", HargassnerSensorDescription(
-        key="pump_active",
-        name="Pompe active",
-        value_key="pump_active",
-        icon="mdi:pump",
-    )),
+    (
+        "HEATING_CIRCUIT",
+        "flow_temperature_current",
+        HargassnerSensorDescription(
+            key="flow_temp_current",
+            name="Flow Temperature",
+            value_key="flow_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "flow_temperature_target",
+        HargassnerSensorDescription(
+            key="flow_temp_target",
+            name="Flow Target Temperature",
+            value_key="flow_temperature_target",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "room_temperature_current",
+        HargassnerSensorDescription(
+            key="room_temp_current",
+            name="Room Temperature",
+            value_key="room_temperature_current",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "room_temperature_target",
+        HargassnerSensorDescription(
+            key="room_temp_target",
+            name="Room Target Temperature",
+            value_key="room_temperature_target",
+            device_class=SensorDeviceClass.TEMPERATURE,
+            state_class=SensorStateClass.MEASUREMENT,
+            native_unit_of_measurement=UnitOfTemperature.CELSIUS,
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "state",
+        HargassnerSensorDescription(
+            key="circuit_state",
+            name="Circuit State",
+            value_key="state",
+            icon="mdi:radiator",
+        ),
+    ),
+    (
+        "HEATING_CIRCUIT",
+        "pump_active",
+        HargassnerSensorDescription(
+            key="pump_active",
+            name="Pump Active",
+            value_key="pump_active",
+            icon="mdi:pump",
+        ),
+    ),
 ]
 
 
@@ -224,14 +286,18 @@ class HargassnerOnlineSensor(HargassnerEntity, SensorEntity):
 
     def __init__(self, coordinator: HargassnerCoordinator) -> None:
         super().__init__(coordinator, "_online", "_online", "online_state")
-        self._attr_name = "État connexion"
+        self._attr_name = "Connection State"
         self._attr_icon = "mdi:cloud-check"
 
     @property
     def native_value(self) -> str:
         if self.coordinator.data:
-            return "En ligne" if self.coordinator.data.get("_online", True) else "Hors ligne"
-        return "Inconnu"
+            return (
+                "Online"
+                if self.coordinator.data.get("_online", True)
+                else "Offline"
+            )
+        return "Unknown"
 
     @property
     def icon(self) -> str:

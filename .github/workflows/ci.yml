@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, dev]
+  pull_request:
+    branches: [main, master, dev]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install lint dependencies
+        run: |
+          pip install ruff
+
+      - name: Run ruff
+        run: ruff check custom_components/
+
+  tests:
+    name: Tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install homeassistant pytest pytest-asyncio pytest-homeassistant-custom-component aiohttp aioresponses voluptuous
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short
+
+  validate-translations:
+    name: Validate Translations
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate JSON files
+        run: |
+          python - <<'EOF'
+          import json, sys, pathlib
+
+          errors = []
+          translation_dir = pathlib.Path("custom_components/hargassner/translations")
+          strings_path = pathlib.Path("custom_components/hargassner/strings.json")
+
+          # Load strings.json as the canonical reference
+          with open(strings_path) as f:
+              strings = json.load(f)
+
+          def get_leaf_keys(d, prefix=""):
+              keys = set()
+              for k, v in d.items():
+                  full = f"{prefix}.{k}" if prefix else k
+                  if isinstance(v, dict):
+                      keys |= get_leaf_keys(v, full)
+                  else:
+                      keys.add(full)
+              return keys
+
+          reference_keys = get_leaf_keys(strings)
+
+          for lang_file in sorted(translation_dir.glob("*.json")):
+              try:
+                  with open(lang_file) as f:
+                      data = json.load(f)
+              except json.JSONDecodeError as e:
+                  errors.append(f"{lang_file.name}: invalid JSON — {e}")
+                  continue
+
+              lang_keys = get_leaf_keys(data)
+
+              # Check config/options keys match (entity keys are optional extras)
+              config_ref = {k for k in reference_keys if k.startswith("config.") or k.startswith("options.")}
+              config_lang = {k for k in lang_keys if k.startswith("config.") or k.startswith("options.")}
+              missing = config_ref - config_lang
+              if missing:
+                  errors.append(f"{lang_file.name}: missing keys: {sorted(missing)}")
+
+          if errors:
+              for e in errors:
+                  print(f"ERROR: {e}")
+              sys.exit(1)
+          else:
+              print("All translation files are valid.")
+          EOF

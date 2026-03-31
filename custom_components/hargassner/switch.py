@@ -1,4 +1,5 @@
 """Switch entities for Hargassner boolean parameters."""
+
 from __future__ import annotations
 
 import logging
@@ -19,6 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 @dataclass(frozen=True)
 class HargassnerSwitchDescription(SwitchEntityDescription):
     """Describes a Hargassner switch."""
+
     widget_prefix: str = ""
 
 

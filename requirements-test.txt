@@ -1,0 +1,9 @@
+# Test dependencies for the Hargassner HA integration
+homeassistant
+pytest
+pytest-asyncio
+pytest-homeassistant-custom-component
+aiohttp
+aioresponses
+voluptuous
+ruff
