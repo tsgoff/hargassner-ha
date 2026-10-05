@@ -88,7 +88,9 @@
       "force_charging_active": { "name": "Zwangsladung aktiv" },
       "event_count": { "name": "Aktive Ereignisse" },
       "latest_event": { "name": "Letztes Ereignis" },
-      "latest_event_type": { "name": "Letzter Ereignistyp" }
+      "latest_event_type": { "name": "Letzter Ereignistyp" },
+      "history_event_count": { "name": "Ereignisverlauf gesamt" },
+      "last_event_occurred": { "name": "Letztes Ereignis aufgetreten" }
     },
     "number": {
       "room_temperature_heating": { "name": "Raumtemperatur Tag" },

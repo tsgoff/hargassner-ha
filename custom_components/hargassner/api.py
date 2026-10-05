@@ -203,6 +203,30 @@ class HargassnerApi:
             return data.get("data", [])
         return data if isinstance(data, list) else []
 
+    async def get_events_history_groups(
+        self, installation_id: str, page_size: int = 1
+    ) -> tuple[list[dict], int]:
+        """Get grouped event history. Returns (groups, total)."""
+        path = (
+            f"{API_INSTALLATIONS}/{installation_id}/events-history-groups"
+            f"?pageSize={page_size}&page=1&sort=-last_occurred&filter="
+        )
+        data = await self._request("GET", path)
+        if isinstance(data, dict):
+            items = data.get("data", [])
+            total = 0
+            meta = data.get("meta", {})
+            if isinstance(meta, dict):
+                pagination = meta.get("pagination", {})
+                if isinstance(pagination, dict):
+                    total = pagination.get("total", 0) or 0
+            if not isinstance(items, list):
+                items = []
+            return items, int(total) if isinstance(total, (int, float)) else 0
+        if isinstance(data, list):
+            return data, len(data)
+        return [], 0
+
     async def patch_value(self, resource_url: str, value: Any) -> dict:
         """Set a parameter value."""
         return await self._request("PATCH", resource_url, json={"value": value})

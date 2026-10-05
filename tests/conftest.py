@@ -214,6 +214,8 @@ def mock_api():
     api.get_widgets = AsyncMock(
         return_value=(MOCK_WIDGETS_RESPONSE["data"], MOCK_WIDGETS_RESPONSE["meta"])
     )
+    api.get_events = AsyncMock(return_value=[])
+    api.get_events_history_groups = AsyncMock(return_value=([], 0))
     api.patch_value = AsyncMock(return_value={})
     api.post_action = AsyncMock(return_value={})
     api.ensure_token_valid = AsyncMock()

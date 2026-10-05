@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -526,6 +527,28 @@ SENSOR_DESCRIPTIONS: list[tuple[str, str, HargassnerSensorDescription]] = [
             icon="mdi:alert-outline",
         ),
     ),
+    (
+        "EVENTS",
+        "history_event_count",
+        HargassnerSensorDescription(
+            key="history_event_count",
+            name="Event History Total",
+            value_key="history_event_count",
+            state_class=SensorStateClass.MEASUREMENT,
+            icon="mdi:history",
+        ),
+    ),
+    (
+        "EVENTS",
+        "last_event_occurred",
+        HargassnerSensorDescription(
+            key="last_event_occurred",
+            name="Last Event Occurred",
+            value_key="last_event_occurred",
+            device_class=SensorDeviceClass.TIMESTAMP,
+            icon="mdi:clock-outline",
+        ),
+    ),
 ]
 
 
@@ -594,7 +617,13 @@ class HargassnerSensorEntity(HargassnerEntity, SensorEntity):
 
     @property
     def native_value(self) -> Any:
-        return self._get_value()
+        value = self._get_value()
+        if self.entity_description.key == "last_event_occurred" and isinstance(value, str) and value:
+            try:
+                return datetime.fromisoformat(value)
+            except ValueError:
+                return None
+        return value
 
 
 class HargassnerOnlineSensor(HargassnerEntity, SensorEntity):

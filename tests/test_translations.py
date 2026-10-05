@@ -29,6 +29,7 @@ EXPECTED_SENSOR_KEYS = {
     "boiler_charge", "boiler_pump_active", "circulation_pump_active",
     "force_charging_active",
     "event_count", "latest_event", "latest_event_type",
+    "history_event_count", "last_event_occurred",
 }
 EXPECTED_NUMBER_KEYS = {
     "room_temperature_heating", "room_temperature_reduction",

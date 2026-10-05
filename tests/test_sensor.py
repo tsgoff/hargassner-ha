@@ -136,3 +136,66 @@ def test_sensor_entity_name_includes_widget_name():
     sensor = make_sensor_entity({"heater_temperature_current": 75.0})
     assert "Boiler" in sensor._attr_name
     assert "Boiler Temperature" in sensor._attr_name
+
+
+def test_last_event_occurred_parses_iso_timestamp():
+    from custom_components.hargassner.sensor import HargassnerSensorDescription
+    from datetime import datetime
+
+    description = HargassnerSensorDescription(
+        key="last_event_occurred",
+        name="Last Event Occurred",
+        value_key="last_event_occurred",
+    )
+    coordinator = MagicMock(spec=HargassnerCoordinator)
+    coordinator.installation_id = "42"
+    coordinator.installation_name = "My Hargassner"
+    coordinator.data = {
+        "EVENTS_EVENTS": {
+            "widget_type": "EVENTS",
+            "widget_name": "EVENTS",
+            "values": {"last_event_occurred": "2026-09-25T08:00:20+02:00"},
+            "parameters": {},
+            "actions": {},
+        }
+    }
+    entity = HargassnerSensorEntity(
+        coordinator=coordinator,
+        widget_key="EVENTS_EVENTS",
+        param_key="last_event_occurred",
+        widget_name="EVENTS",
+        description=description,
+    )
+    value = entity.native_value
+    assert isinstance(value, datetime)
+    assert (value.year, value.month, value.day) == (2026, 9, 25)
+
+
+def test_last_event_occurred_none_when_missing():
+    from custom_components.hargassner.sensor import HargassnerSensorDescription
+
+    description = HargassnerSensorDescription(
+        key="last_event_occurred",
+        name="Last Event Occurred",
+        value_key="last_event_occurred",
+    )
+    coordinator = MagicMock(spec=HargassnerCoordinator)
+    coordinator.installation_id = "42"
+    coordinator.installation_name = "My Hargassner"
+    coordinator.data = {
+        "EVENTS_EVENTS": {
+            "widget_type": "EVENTS",
+            "widget_name": "EVENTS",
+            "values": {},
+            "parameters": {},
+            "actions": {},
+        }
+    }
+    entity = HargassnerSensorEntity(
+        coordinator=coordinator,
+        widget_key="EVENTS_EVENTS",
+        param_key="last_event_occurred",
+        widget_name="EVENTS",
+        description=description,
+    )
+    assert entity.native_value is None

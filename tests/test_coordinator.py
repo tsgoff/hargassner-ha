@@ -134,11 +134,14 @@ async def test_update_data_auth_error_no_cache_raises(hass, mock_api):
 
 @pytest.mark.asyncio
 async def test_update_data_events_widget(hass, mock_api):
-    """EVENTS widget with list values should be converted to computed dict."""
+    """EVENTS via dedicated /events endpoint (widgets no longer include EVENTS)."""
     mock_api.get_widgets = AsyncMock(return_value=(
-        [MOCK_WIDGET_EVENTS],
+        [MOCK_WIDGET_HEATER],
         {"online_state": True},
     ))
+    mock_api.get_events = AsyncMock(
+        return_value=MOCK_WIDGET_EVENTS["values"]
+    )
     coord = make_coordinator(hass, mock_api)
     data = await coord._async_update_data()
 
@@ -148,6 +151,101 @@ async def test_update_data_events_widget(hass, mock_api):
     assert events_entry["values"]["latest_event"] == "eCleaner Wartung Antrieb"
     assert events_entry["values"]["latest_event_type"] == "TYPE_WARNING"
     assert "confirm_all" in events_entry["actions"]
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_empty_list(hass, mock_api):
+    """No active events: EVENTS entry with count 0 (sensors stay available)."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_HEATER],
+        {"online_state": True},
+    ))
+    mock_api.get_events = AsyncMock(return_value=[])
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    events_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "EVENTS"), None)
+    assert events_entry is not None
+    assert events_entry["values"]["event_count"] == 0
+    assert events_entry["values"]["latest_event"] == ""
+    assert events_entry["values"]["latest_event_type"] == ""
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_api_error_falls_back_to_widgets(hass, mock_api):
+    """If /events fails, a widgets-embedded EVENTS entry is kept."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_EVENTS],
+        {"online_state": True},
+    ))
+    mock_api.get_events = AsyncMock(side_effect=HargassnerApiError("events down"))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    events_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "EVENTS"), None)
+    assert events_entry is not None
+    assert events_entry["values"]["event_count"] == 1
+    assert events_entry["values"]["latest_event"] == "eCleaner Wartung Antrieb"
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_empty_list_with_history_fallback(hass, mock_api):
+    """No active events: latest_* fall back to most recent history group."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_HEATER],
+        {"online_state": True},
+    ))
+    mock_api.get_events = AsyncMock(return_value=[])
+    mock_api.get_events_history_groups = AsyncMock(return_value=(
+        [{"text": "Überstrom Einschubschnecke", "event_type": "TYPE_ERROR",
+          "last_occurred": "2026-09-25T08:00:20+02:00"}],
+        31,
+    ))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    events_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "EVENTS"), None)
+    assert events_entry is not None
+    assert events_entry["values"]["event_count"] == 0
+    assert events_entry["values"]["latest_event"] == "Überstrom Einschubschnecke"
+    assert events_entry["values"]["latest_event_type"] == "TYPE_ERROR"
+    assert events_entry["values"]["history_event_count"] == 31
+    assert events_entry["values"]["last_event_occurred"] == "2026-09-25T08:00:20+02:00"
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_history_failure_tolerated(hass, mock_api):
+    """History endpoint failure must not break the update."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_HEATER],
+        {"online_state": True},
+    ))
+    mock_api.get_events = AsyncMock(return_value=[])
+    mock_api.get_events_history_groups = AsyncMock(
+        side_effect=HargassnerApiError("history down")
+    )
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    events_entry = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "EVENTS"), None)
+    assert events_entry is not None
+    assert events_entry["values"]["event_count"] == 0
+    assert events_entry["values"]["history_event_count"] == 0
+
+
+@pytest.mark.asyncio
+async def test_update_data_events_api_error_no_widgets_events(hass, mock_api):
+    """If /events fails and widgets have no EVENTS, update still succeeds."""
+    mock_api.get_widgets = AsyncMock(return_value=(
+        [MOCK_WIDGET_HEATER],
+        {"online_state": True},
+    ))
+    mock_api.get_events = AsyncMock(side_effect=HargassnerApiError("events down"))
+    coord = make_coordinator(hass, mock_api)
+    data = await coord._async_update_data()
+
+    heater = next((v for k, v in data.items() if isinstance(v, dict) and v.get("widget_type") == "HEATER"), None)
+    assert heater is not None
 
 
 @pytest.mark.asyncio

@@ -88,7 +88,9 @@
       "force_charging_active": { "name": "Charge forcée active" },
       "event_count": { "name": "Événements actifs" },
       "latest_event": { "name": "Dernier événement" },
-      "latest_event_type": { "name": "Type dernier événement" }
+      "latest_event_type": { "name": "Type dernier événement" },
+      "history_event_count": { "name": "Total historique des événements" },
+      "last_event_occurred": { "name": "Dernier événement survenu" }
     },
     "number": {
       "room_temperature_heating": { "name": "Température ambiante jour" },

@@ -187,6 +187,30 @@ async def test_get_widgets_404_raises():
 
 
 # ---------------------------------------------------------------------------
+# get_events / events history
+# ---------------------------------------------------------------------------
+
+@pytest.mark.asyncio
+async def test_get_events_history_groups_returns_items_and_total():
+    session = MagicMock()
+    payload = {
+        "data": [{"id": 501, "text": "Überstrom Einschubschnecke",
+                  "event_type": "TYPE_ERROR",
+                  "last_occurred": "2026-09-25T08:00:20+02:00"}],
+        "meta": {"pagination": {"total": 31}},
+    }
+    session.request = MagicMock(return_value=make_mock_response(200, json_data=payload))
+    api = HargassnerApi(session)
+    api._access_token = "token"
+    api._token_expires_at = time.time() + 3600
+
+    items, total = await api.get_events_history_groups("35272")
+    assert len(items) == 1
+    assert total == 31
+    assert items[0]["event_code"] if "event_code" in items[0] else True
+
+
+# ---------------------------------------------------------------------------
 # patch_value / post_action
 # ---------------------------------------------------------------------------
 
