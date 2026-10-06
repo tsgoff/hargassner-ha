@@ -5,7 +5,6 @@ import logging
 from typing import Any
 
 import voluptuous as vol
-
 from homeassistant import config_entries
 from homeassistant.const import CONF_EMAIL, CONF_PASSWORD
 from homeassistant.data_entry_flow import FlowResult
@@ -13,15 +12,14 @@ from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import HargassnerApi, HargassnerApiError, HargassnerAuthError
-
 from .const import (
     CONF_INSTALLATION_ID,
     CONF_INSTALLATION_NAME,
     CONF_SCAN_INTERVAL,
     DEFAULT_SCAN_INTERVAL,
-    MIN_SCAN_INTERVAL,
-    MAX_SCAN_INTERVAL,
     DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,8 +52,8 @@ class HargassnerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 errors["base"] = "invalid_auth"
             except HargassnerApiError:
                 errors["base"] = "cannot_connect"
-            except Exception as err:
-                _LOGGER.exception("Unexpected error: %s", err)
+            except Exception:
+                _LOGGER.exception("Unexpected error")
                 errors["base"] = "unknown"
             else:
                 if not installations:

@@ -9,10 +9,10 @@ import aiohttp
 
 from .const import (
     API_BASE_URL,
+    API_INSTALLATIONS,
     API_LOGIN,
     API_LOGOUT,
     API_REFRESH,
-    API_INSTALLATIONS,
     API_WIDGETS,
     APP_BRANDING,
     CLIENT_ID,
@@ -108,7 +108,7 @@ class HargassnerApi:
             try:
                 await self._do_refresh()
                 return
-            except Exception as err:
+            except HargassnerApiError as err:
                 _LOGGER.warning("Token refresh failed (%s), re-logging in...", err)
         # Fall back to full login
         if self._email and self._password:

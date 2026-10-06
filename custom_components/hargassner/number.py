@@ -1,12 +1,20 @@
 """Number entities for writable Hargassner parameters."""
 from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
-from homeassistant.components.number import NumberDeviceClass, NumberEntity, NumberEntityDescription, NumberMode
+
+from homeassistant.components.number import (
+    NumberDeviceClass,
+    NumberEntity,
+    NumberEntityDescription,
+    NumberMode,
+)
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import UnitOfTemperature
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+
 from .const import DOMAIN
 from .coordinator import HargassnerCoordinator
 from .entity_base import HargassnerEntity
